@@ -63,8 +63,8 @@ func setupMiddlewares(router *chi.Mux) {
 func setupCORS(router *chi.Mux) {
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{
-			"https://subpact.app",
-			"https://www.subpact.app",
+			"https://neatblock.org",
+			"https://www.neatblock.org",
 			"http://localhost:3000",
 		},
 		AllowedMethods: []string{
