@@ -22,7 +22,7 @@ func ValidateAPIToken(w http.ResponseWriter, r *http.Request) error {
 	token := strings.TrimPrefix(authHeader, "Bearer ")
 
 	// Get the expected token from an environment variable
-	expectedToken := os.Getenv("API_AUTH_TOKEN")
+	expectedToken := os.Getenv("INTERNAL_API_TOKEN")
 
 	// Perform a constant-time comparison of the tokens
 	if subtle.ConstantTimeCompare([]byte(token), []byte(expectedToken)) != 1 {

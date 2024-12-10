@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	apiutil "github.com/enricomilli/neat-server/api/api-utils"
-	db "github.com/enricomilli/neat-server/database"
+	"github.com/enricomilli/neat-server/db"
 	"github.com/supabase-community/supabase-go"
 )
 
@@ -58,20 +58,29 @@ func HandleAddPool(w http.ResponseWriter, r *http.Request) {
 		"name":     poolName,
 	}
 
-	_, _, err = sbClient.From("pools").Upsert(newPool, "", "", "").Execute()
+	newPoolStruct := Pool{}
+
+	_, err = sbClient.From("pools").Upsert(newPool, "pool_url", "*", "exact").ExecuteTo(&newPoolStruct)
 	if err != nil {
 		code, msg := db.HandleSupabaseError(err)
 		apiutil.ResponseWithError(w, code, msg)
 		return
 	}
 
-	fmt.Printf("added new pool: %s\nfor user: %v \n", pool_url, userID)
+	fmt.Printf("new pool was saved: %s\nfor user: %v \n", pool_url, userID)
+
+	err = newPoolStruct.UpdatePoolData()
+	if err != nil {
+		apiutil.ResponseWithError(w, http.StatusInternalServerError, "could not update pool: %w", err)
+		return
+	}
 
 	response := map[string]any{
 		"success": true,
-		"info":    "pool added",
+		"info":    "Pool was adding and the information was found.",
 	}
 	apiutil.ResponseWithJSON(w, http.StatusOK, response)
+
 }
 
 func isValidURL(str string) bool {

@@ -23,9 +23,20 @@ func (pool *Pool) UpdatePoolData() error {
 	fmt.Println("New Totals:", newTotalsData)
 	fmt.Println("New Rewards:", newRewardsData)
 
+	// TODO:
 	// check if theres new data
+	// i've written this function for bps
+	hasNewData := true
 
+	if !hasNewData {
+		return nil
+	}
+
+	err = pool.SaveToDB()
 	// store the new data
+	if err != nil {
+		return fmt.Errorf("could not save pool: %w", err)
+	}
 
 	return nil
 }

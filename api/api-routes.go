@@ -21,8 +21,11 @@ func CreateRoutes(router *chi.Mux) {
 			})
 
 			// internal APIs
-			// v1Router.Group(func(internal chi.Router) {
-			// })
+			v1Router.Group(func(internal chi.Router) {
+				internal.Use(middleware.Make(middleware.ValidateAPIToken))
+
+				internal.Get("/pools/update-all", pools.HandleUpdateAll)
+			})
 		})
 	})
 
