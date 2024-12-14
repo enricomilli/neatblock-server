@@ -3,8 +3,9 @@ package poolproviders
 // The PoolProvider is an interface that works with all pools provider websites
 type PoolProvider interface {
 	CompanyName() string
-	ScrapeTotals(observerUrl string) (float64, error)        // todo create a unified type for totals
-	ScrapeDailyRewards(observerUrl string) ([]string, error) // todo create a unified type for a reward
+	ValidateURL(observerURL string) error
+	ScrapeTotals(observerURL string) (NeatblockTotals, error)         // todo create a unified type for totals
+	ScrapeDailyRewards(observerURL string) ([]NeatblockReward, error) // todo create a unified type for a reward
 }
 
 type SupportedProvider string
@@ -21,4 +22,15 @@ func (p SupportedProvider) IsValid() bool {
 	default:
 		return false
 	}
+}
+
+type NeatblockTotals struct {
+	TotalBtcProfit float64
+}
+
+type NeatblockReward struct {
+	Date   string
+	TxFee  float64
+	Reward float64
+	Payout float64
 }

@@ -1,42 +1,56 @@
 package pools
 
-import "fmt"
+import (
+	"fmt"
+
+	poolproviders "github.com/enricomilli/neat-server/api/v1/pools/providers"
+)
 
 func (pool *Pool) UpdatePoolData() error {
 
-	// create interface based off provider
 	poolProvider, err := pool.NewProviderInterface()
 	if err != nil {
 		return fmt.Errorf("could not create pool interface: %w", err)
 	}
 
-	newTotalsData, err := poolProvider.ScrapeTotals(pool.ObserverURL)
+	scrapedTotals, err := poolProvider.ScrapeTotals(pool.ObserverURL)
 	if err != nil {
-		return fmt.Errorf("could not scrape totals: %w", err)
+		return fmt.Errorf("could not scrape n store totals: %w", err)
 	}
 
-	newRewardsData, err := poolProvider.ScrapeDailyRewards(pool.ObserverURL)
+	totalsChanged := checkIfTotalsChange(pool, &scrapedTotals)
+	if !totalsChanged {
+		return nil
+	}
+
+	scrapedRewards, err := poolProvider.ScrapeDailyRewards(pool.ObserverURL)
 	if err != nil {
 		return fmt.Errorf("could not scrape daily rewards: %w", err)
 	}
 
-	fmt.Println("New Totals:", newTotalsData)
-	fmt.Println("New Rewards:", newRewardsData)
-
-	// TODO:
-	// check if theres new data
-	// i've written this function for bps
-	hasNewData := true
-
+	hasNewData := CheckForNewData(pool, scrapedTotals, scrapedRewards)
 	if !hasNewData {
 		return nil
 	}
 
 	err = pool.SaveToDB()
-	// store the new data
 	if err != nil {
 		return fmt.Errorf("could not save pool: %w", err)
 	}
 
-	return nil
+	return nil // no errors
+}
+
+func checkIfTotalsChange(pool *Pool, scrapedTotals *poolproviders.NeatblockTotals) bool {
+
+	if pool.BTCRevenue == scrapedTotals.TotalBtcProfit {
+		return false
+	}
+
+	return true
+}
+
+func CheckForNewData(pool *Pool, sTotals poolproviders.NeatblockTotals, sRewards []poolproviders.NeatblockReward) bool {
+
+	return false
 }

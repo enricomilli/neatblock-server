@@ -24,8 +24,8 @@ func HandleAllTransactions(w http.ResponseWriter, r *http.Request) {
 	// Configure RPC connection
 	connCfg := &rpcclient.ConnConfig{
 		Host:         os.Getenv("BTCD_ENDPOINT"),
-		User:         os.Getenv("USERNAME"),
-		Pass:         os.Getenv("PASSWORD"),
+		User:         os.Getenv("BTCD_USERNAME"),
+		Pass:         os.Getenv("BTCD_PASSWORD"),
 		HTTPPostMode: true,
 		DisableTLS:   true,
 	}

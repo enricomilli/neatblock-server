@@ -34,11 +34,12 @@ func (pool *Pool) GetProvider() (poolproviders.SupportedProvider, error) {
 	return provider, nil
 }
 
+// A pool provider is an interface to interact with pool hosts
 func (pool *Pool) NewProviderInterface() (poolproviders.PoolProvider, error) {
 
 	provider, err := pool.GetProvider()
 	if err != nil {
-		return nil, fmt.Errorf("error getting provider: %w", err)
+		return nil, fmt.Errorf("Error extracting provider: %w", err)
 	}
 
 	switch provider {
@@ -47,7 +48,7 @@ func (pool *Pool) NewProviderInterface() (poolproviders.PoolProvider, error) {
 	case poolproviders.EnumF2Pool:
 		return &poolproviders.ViaBTC{}, nil
 	default:
-		return nil, fmt.Errorf("No provider interface found for provider: %s", provider)
+		return nil, fmt.Errorf("Pool provider %s is not supported.", provider)
 	}
 
 }
