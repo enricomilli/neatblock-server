@@ -4,8 +4,8 @@ package poolproviders
 type PoolProvider interface {
 	CompanyName() string
 	ValidateURL(observerURL string) error
-	ScrapeTotals(observerURL string) (NeatblockTotals, error)         // todo create a unified type for totals
-	ScrapeDailyRewards(observerURL string) ([]NeatblockReward, error) // todo create a unified type for a reward
+	ScrapeTotals(observerURL string) (MiningTotals, error)         // todo create a unified type for totals
+	ScrapeDailyRewards(observerURL string) ([]MiningReward, error) // todo create a unified type for a reward
 }
 
 type SupportedProvider string
@@ -24,13 +24,15 @@ func (p SupportedProvider) IsValid() bool {
 	}
 }
 
-type NeatblockTotals struct {
+type MiningTotals struct {
 	TotalBtcProfit float64
 }
 
-type NeatblockReward struct {
-	Date   string
-	TxFee  float64
-	Reward float64
-	Payout float64
+type MiningReward struct {
+	Date         string
+	Hashrate     float64
+	TxFee        float64
+	Reward       float64
+	RewardPlusTx float64
+	Payout       float64
 }

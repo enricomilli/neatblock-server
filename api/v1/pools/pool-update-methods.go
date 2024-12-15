@@ -28,12 +28,22 @@ func (pool *Pool) UpdatePoolData() error {
 		return fmt.Errorf("could not scrape daily rewards: %w", err)
 	}
 
-	hasNewData := CheckForNewData(pool, scrapedTotals, scrapedRewards)
+	storedPoolRewards, err := pool.GetAllRewards()
+	if err != nil {
+		return err
+	}
+
+	newRewards, hasNewData := CheckForNewData(storedPoolRewards, scrapedRewards)
 	if !hasNewData {
 		return nil
 	}
 
-	err = pool.SaveToDB()
+	err = pool.StoreRewards(newRewards)
+	if err != nil {
+		return err
+	}
+
+	err = pool.StorePoolStructState()
 	if err != nil {
 		return fmt.Errorf("could not save pool: %w", err)
 	}
@@ -41,7 +51,7 @@ func (pool *Pool) UpdatePoolData() error {
 	return nil // no errors
 }
 
-func checkIfTotalsChange(pool *Pool, scrapedTotals *poolproviders.NeatblockTotals) bool {
+func checkIfTotalsChange(pool *Pool, scrapedTotals *poolproviders.MiningTotals) bool {
 
 	if pool.BTCRevenue == scrapedTotals.TotalBtcProfit {
 		return false
@@ -50,7 +60,30 @@ func checkIfTotalsChange(pool *Pool, scrapedTotals *poolproviders.NeatblockTotal
 	return true
 }
 
-func CheckForNewData(pool *Pool, sTotals poolproviders.NeatblockTotals, sRewards []poolproviders.NeatblockReward) bool {
+func CheckForNewData(storedRewards []poolproviders.MiningReward, scrapedRewards []poolproviders.MiningReward) (newRewards []poolproviders.MiningReward, hasNewRewards bool) {
 
-	return false
+	hash := map[string]any{}
+	hasNewRewards = false
+
+	for _, reward := range storedRewards {
+		hash[reward.Date] = 1
+	}
+
+	for _, reward := range scrapedRewards {
+
+		_, exists := hash[reward.Date]
+		if !exists {
+			if !hasNewRewards {
+				hasNewRewards = true
+			}
+			newRewards = append(newRewards, reward)
+		}
+
+	}
+
+	if !hasNewRewards {
+		return newRewards, false
+	}
+
+	return newRewards, true
 }

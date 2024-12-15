@@ -1,4 +1,4 @@
-package poolproviders
+package viabtc
 
 type ViaBTCTotalsResponse struct {
 	Code    int    `json:"code"`
