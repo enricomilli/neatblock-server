@@ -9,8 +9,6 @@ import (
 // independent pool example: https://www.viabtc.com/observer/dashboard?access_key=d1cab8ae8c6fedcc2cd3d370cc1fd212&coin=BTC
 // multiple user pool example: https://www.viabtc.com/observer/dashboard?access_key=fec491fdb7fdc2726c357200a798a041&coin=BTC&user_id=172951
 
-type ViaBTC struct{}
-
 func (provider *ViaBTC) CompanyName() string {
 	return "VIABTC"
 }

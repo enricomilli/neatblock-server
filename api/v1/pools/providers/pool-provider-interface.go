@@ -4,8 +4,9 @@ package poolproviders
 type PoolProvider interface {
 	CompanyName() string
 	ValidateURL(observerURL string) error
-	ScrapeTotals(observerURL string) (MiningTotals, error)         // todo create a unified type for totals
-	ScrapeDailyRewards(observerURL string) ([]MiningReward, error) // todo create a unified type for a reward
+	ScrapeTotals(observerURL string) (MiningTotals, error) // todo create a unified type for totals
+	// requires pool id to add as a reference to each reward
+	ScrapeDailyRewards(observerURL string, poolID string) ([]MiningReward, error)
 }
 
 type SupportedProvider string
@@ -29,10 +30,11 @@ type MiningTotals struct {
 }
 
 type MiningReward struct {
-	Date         string
-	Hashrate     float64
-	TxFee        float64
-	Reward       float64
-	RewardPlusTx float64
-	Payout       float64
+	PoolReference string
+	Date          string
+	Hashrate      float64
+	TxFee         float64
+	Reward        float64
+	RewardPlusTx  float64
+	Payout        float64
 }

@@ -13,7 +13,7 @@ import (
 	poolproviders "github.com/enricomilli/neat-server/api/v1/pools/providers"
 )
 
-func (provider *ViaBTC) ScrapeDailyRewards(observerURL string) ([]poolproviders.MiningReward, error) {
+func (provider *ViaBTC) ScrapeDailyRewards(observerURL string, poolID string) ([]poolproviders.MiningReward, error) {
 
 	url, err := url.Parse(observerURL)
 	if err != nil {
@@ -54,10 +54,10 @@ func (provider *ViaBTC) ScrapeDailyRewards(observerURL string) ([]poolproviders.
 
 	// format from viabtc rewards to neatblock mining rewards
 
-	return reformatData(rewardsRes)
+	return reformatData(rewardsRes, poolID)
 }
 
-func reformatData(data ViaBTCRewardsResponse) ([]poolproviders.MiningReward, error) {
+func reformatData(data ViaBTCRewardsResponse, poolID string) ([]poolproviders.MiningReward, error) {
 
 	formated := []poolproviders.MiningReward{}
 
@@ -89,12 +89,13 @@ func reformatData(data ViaBTCRewardsResponse) ([]poolproviders.MiningReward, err
 		}
 
 		formatedDay := poolproviders.MiningReward{
-			Date:         day.Date,
-			Hashrate:     newHashrate,
-			Reward:       rewardBTC.InexactFloat64(),
-			TxFee:        rewardTxFee.InexactFloat64(),
-			RewardPlusTx: rewardTotal.InexactFloat64(),
-			Payout:       payout.InexactFloat64(),
+			Date:          day.Date,
+			PoolReference: poolID,
+			Hashrate:      newHashrate,
+			Reward:        rewardBTC.InexactFloat64(),
+			TxFee:         rewardTxFee.InexactFloat64(),
+			RewardPlusTx:  rewardTotal.InexactFloat64(),
+			Payout:        payout.InexactFloat64(),
 		}
 
 		formated = append(formated, formatedDay)

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	poolproviders "github.com/enricomilli/neat-server/api/v1/pools/providers"
+	"github.com/enricomilli/neat-server/api/v1/pools/providers/f2pool"
 	"github.com/enricomilli/neat-server/api/v1/pools/providers/viabtc"
 	"golang.org/x/net/publicsuffix"
 )
@@ -47,7 +48,7 @@ func (pool *Pool) NewProviderInterface() (poolproviders.PoolProvider, error) {
 	case poolproviders.EnumViaBTC:
 		return &viabtc.ViaBTC{}, nil
 	case poolproviders.EnumF2Pool:
-		return &viabtc.ViaBTC{}, nil
+		return &f2pool.F2Pool{}, nil
 	default:
 		return nil, fmt.Errorf("Pool provider %s is not supported.", provider)
 	}

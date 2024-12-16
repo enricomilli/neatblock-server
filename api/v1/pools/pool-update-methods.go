@@ -23,7 +23,7 @@ func (pool *Pool) UpdatePoolData() error {
 		return nil
 	}
 
-	scrapedRewards, err := poolProvider.ScrapeDailyRewards(pool.ObserverURL)
+	scrapedRewards, err := poolProvider.ScrapeDailyRewards(pool.ObserverURL, pool.ID)
 	if err != nil {
 		return fmt.Errorf("could not scrape daily rewards: %w", err)
 	}
