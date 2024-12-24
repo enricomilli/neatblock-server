@@ -53,7 +53,7 @@ func (pool *Pool) UpdatePoolData() error {
 
 func checkIfTotalsChange(pool *Pool, scrapedTotals *poolproviders.MiningTotals) bool {
 
-	if pool.BTCRevenue == scrapedTotals.TotalBtcProfit {
+	if pool.TotalBtcMined == scrapedTotals.TotalBtcProfit {
 		return false
 	}
 

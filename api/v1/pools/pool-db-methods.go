@@ -5,6 +5,7 @@ import (
 	"os"
 
 	poolproviders "github.com/enricomilli/neat-server/api/v1/pools/providers"
+	"github.com/enricomilli/neat-server/db"
 	"github.com/supabase-community/supabase-go"
 )
 
@@ -12,14 +13,26 @@ import (
 // the pool struct into the db
 func (pool *Pool) StorePoolStructState() error {
 
-	sbClient, err := supabase.NewClient(os.Getenv("SUPABASE_URL"), os.Getenv("SUPABASE_SERVICE_KEY"), &supabase.ClientOptions{})
+	// sbClient, err := supabase.NewClient(os.Getenv("SUPABASE_URL"), os.Getenv("SUPABASE_SERVICE_KEY"), &supabase.ClientOptions{})
+	// if err != nil {
+	// 	return fmt.Errorf("could not init supabase client: %w", err)
+	// }
+
+	// _, _, err = sbClient.From("pools").Upsert(pool, "id", "*", "exact").Execute()
+	// if err != nil {
+	// 	return fmt.Errorf("could not execute pool upsert: %w", err)
+	// }
+
+	database, err := db.NewClient()
 	if err != nil {
-		return fmt.Errorf("could not init supabase client: %w", err)
+		return fmt.Errorf("could not init db: %v", err)
 	}
 
-	_, _, err = sbClient.From("pools").Upsert(pool, "id", "*", "exact").Execute()
+	query, values := db.BuildInsertQuery("pools", pool)
+
+	_, err = database.NamedExec(query, values)
 	if err != nil {
-		return fmt.Errorf("could not execute pool upsert: %w", err)
+		return fmt.Errorf("could not store current pool state: %v", err)
 	}
 
 	return nil
@@ -27,9 +40,24 @@ func (pool *Pool) StorePoolStructState() error {
 
 // Gets all the rewards with the pool uid as a reference
 func (pool *Pool) GetAllRewards() ([]poolproviders.MiningReward, error) {
-	fmt.Println("getting all rewards for pool:", pool.Name, "with id:", pool.ID)
 
-	return []poolproviders.MiningReward{}, nil
+	rewards := []poolproviders.MiningReward{}
+
+	database, err := db.NewClient()
+	if err != nil {
+		return rewards, err
+	}
+
+	query := `
+		select * from rewards where pool_id = $1
+	`
+
+	err = database.Select(&rewards, query, pool.ID)
+	if err != nil {
+		return rewards, fmt.Errorf("could not get all rewards: %v", err)
+	}
+
+	return rewards, nil
 }
 
 // This function will store the list of rewards its passed, will error if the reward already exists

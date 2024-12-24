@@ -46,7 +46,7 @@ func HandleAddPool(w http.ResponseWriter, r *http.Request) {
 	// VALIDATING WITH POOL PROVIDER
 	newPool := Pool{
 		ObserverURL: pool_url,
-		Owner:       userID,
+		OwnerID:     userID,
 		Name:        poolName,
 	}
 
