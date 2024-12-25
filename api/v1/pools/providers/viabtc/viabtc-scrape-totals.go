@@ -56,5 +56,5 @@ func (provider *ViaBTC) ScrapeTotals(observerURL string) (poolproviders.MiningTo
 
 	fmt.Println(totalProfit)
 
-	return poolproviders.MiningTotals{TotalBtcProfit: totalProfit}, nil
+	return poolproviders.MiningTotals{TotalBtcMined: totalProfit}, nil
 }

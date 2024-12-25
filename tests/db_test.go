@@ -1,4 +1,4 @@
-package db_test
+package tests
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/enricomilli/neat-server/api/v1/pools"
+	poolproviders "github.com/enricomilli/neat-server/api/v1/pools/providers"
 	"github.com/enricomilli/neat-server/db"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
@@ -84,7 +85,7 @@ func TestGettingAllRewards(t *testing.T) {
 	db, err := db.NewClient()
 	assert.NoError(t, err)
 
-	rewardsList := []pools.PoolReward{}
+	rewardsList := []poolproviders.MiningReward{}
 
 	query := `
 	select * from pool_rewards order by date ASC

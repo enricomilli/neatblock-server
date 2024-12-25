@@ -2,11 +2,8 @@ package pools
 
 import (
 	"net/http"
-	"os"
 
 	apiutil "github.com/enricomilli/neat-server/api/api-utils"
-	"github.com/enricomilli/neat-server/db"
-	"github.com/supabase-community/supabase-go"
 )
 
 func HandleAddPool(w http.ResponseWriter, r *http.Request) {
@@ -62,23 +59,29 @@ func HandleAddPool(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = newPool.UpdatePoolData()
+	err = newPool.ScrapeMiningData()
 	if err != nil {
 		apiutil.ResponseWithError(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	// STORING THE NEW POOL TO PERSISTANT STORAGE
-	sbClient, err := supabase.NewClient(os.Getenv("SUPABASE_URL"), userToken, &supabase.ClientOptions{})
+	// sbClient, err := supabase.NewClient(os.Getenv("SUPABASE_URL"), userToken, &supabase.ClientOptions{})
+	// if err != nil {
+	// 	apiutil.ResponseWithError(w, http.StatusInternalServerError, err)
+	// 	return
+	// }
+
+	// _, err = sbClient.From("pools").Upsert(newPool, "pool_url", "*", "exact").ExecuteTo(&newPool)
+	// if err != nil {
+	// 	code, msg := db.HandleSupabaseError(err)
+	// 	apiutil.ResponseWithError(w, code, msg)
+	// 	return
+	// }
+
+	err = newPool.StorePoolStructState()
 	if err != nil {
 		apiutil.ResponseWithError(w, http.StatusInternalServerError, err)
-		return
-	}
-
-	_, err = sbClient.From("pools").Upsert(newPool, "pool_url", "*", "exact").ExecuteTo(&newPool)
-	if err != nil {
-		code, msg := db.HandleSupabaseError(err)
-		apiutil.ResponseWithError(w, code, msg)
 		return
 	}
 

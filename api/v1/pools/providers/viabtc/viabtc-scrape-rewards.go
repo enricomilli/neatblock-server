@@ -89,13 +89,13 @@ func reformatData(data ViaBTCRewardsResponse, poolID string) ([]poolproviders.Mi
 		}
 
 		formatedDay := poolproviders.MiningReward{
-			Date:          day.Date,
-			PoolReference: poolID,
-			Hashrate:      newHashrate,
-			Reward:        rewardBTC.InexactFloat64(),
-			TxFee:         rewardTxFee.InexactFloat64(),
-			RewardPlusTx:  rewardTotal.InexactFloat64(),
-			Payout:        payout.InexactFloat64(),
+			Date:      day.Date,
+			PoolID:    poolID,
+			Hashrate:  newHashrate,
+			BtcReward: rewardBTC.InexactFloat64(),
+			BtcTxFee:  rewardTxFee.InexactFloat64(),
+			Total:     rewardTotal.InexactFloat64(),
+			Payout:    payout.InexactFloat64(),
 		}
 
 		formated = append(formated, formatedDay)

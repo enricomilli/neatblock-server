@@ -27,17 +27,3 @@ type Pool struct {
 	CreatedAt               string          `db:"created_at"`
 	UpdatedAt               string          `db:"updated_at"`
 }
-
-// row from rewards table
-type PoolReward struct {
-	ID        string  `db:"id"`
-	PoolID    string  `db:"pool_id"`
-	Date      string  `db:"date"`
-	Hashrate  float64 `db:"hashrate"`
-	BtcReward float64 `db:"btc_reward"` // BTC reward
-	BtcTxFee  float64 `db:"btc_tx_fee"` // Transaction fee rewarded
-	Total     float64 `db:"total"`      // BtcTxFee + BtcReward
-	Payout    float64 `db:"payout"`     // Total payout
-	CreatedAt string  `db:"created_at"`
-	UpdatedAt string  `db:"updated_at"`
-}

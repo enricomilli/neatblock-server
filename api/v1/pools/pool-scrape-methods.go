@@ -6,7 +6,7 @@ import (
 	poolproviders "github.com/enricomilli/neat-server/api/v1/pools/providers"
 )
 
-func (pool *Pool) UpdatePoolData() error {
+func (pool *Pool) ScrapeMiningData() error {
 
 	poolProvider, err := pool.NewProviderInterface()
 	if err != nil {
@@ -15,7 +15,7 @@ func (pool *Pool) UpdatePoolData() error {
 
 	scrapedTotals, err := poolProvider.ScrapeTotals(pool.ObserverURL)
 	if err != nil {
-		return fmt.Errorf("could not scrape n store totals: %w", err)
+		return fmt.Errorf("could not scrape totals: %w", err)
 	}
 
 	totalsChanged := checkIfTotalsChange(pool, &scrapedTotals)
@@ -53,7 +53,7 @@ func (pool *Pool) UpdatePoolData() error {
 
 func checkIfTotalsChange(pool *Pool, scrapedTotals *poolproviders.MiningTotals) bool {
 
-	if pool.TotalBtcMined == scrapedTotals.TotalBtcProfit {
+	if pool.TotalBtcMined == scrapedTotals.TotalBtcMined {
 		return false
 	}
 
