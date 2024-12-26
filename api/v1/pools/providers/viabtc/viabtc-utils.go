@@ -44,14 +44,14 @@ func (provider *ViaBTC) GetTotalsEndpoint(userID, accessKey, coin string) string
 	return "https://www.viabtc.com/res/observer/home" + queryString
 }
 
+// missing limit and page parameters
 func (provider *ViaBTC) GetRewardsEndpoint(userID, accessKey, coin string) string {
 	queryString := "?" + "access_key=" + accessKey + "&coin=" + coin
-
 	if userID != "" {
 		queryString += "&user_id=" + userID
 	}
 
-	return "https://www.viabtc.com/observer/profit" + queryString
+	return "https://www.viabtc.com/res/observer/profit/detail" + queryString
 }
 
 func addViaBTCHeaders(req *http.Request) {

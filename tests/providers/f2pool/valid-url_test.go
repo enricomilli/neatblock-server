@@ -3,6 +3,8 @@ package f2pool
 import (
 	"strings"
 	"testing"
+
+	"github.com/enricomilli/neat-server/api/v1/pools/providers/f2pool"
 )
 
 func TestF2Pool_ValidateURL(t *testing.T) {
@@ -56,7 +58,7 @@ func TestF2Pool_ValidateURL(t *testing.T) {
 		},
 	}
 
-	provider := &F2Pool{}
+	provider := &f2pool.F2Pool{}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

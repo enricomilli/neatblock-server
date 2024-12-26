@@ -49,12 +49,12 @@ func (provider *ViaBTC) ScrapeTotals(observerURL string) (poolproviders.MiningTo
 		return poolproviders.MiningTotals{}, fmt.Errorf("could not parse json body: %v", err)
 	}
 
+	// fmt.Printf("Response from viabtc: %+v\n", viaBtcResponse)
+
 	totalProfit, err := strconv.ParseFloat(viaBtcResponse.Data.ProfitTotal, 64)
 	if err != nil {
 		return poolproviders.MiningTotals{}, fmt.Errorf("could not parse float from string: %s", viaBtcResponse.Data.ProfitTotal)
 	}
-
-	fmt.Println(totalProfit)
 
 	return poolproviders.MiningTotals{TotalBtcMined: totalProfit}, nil
 }

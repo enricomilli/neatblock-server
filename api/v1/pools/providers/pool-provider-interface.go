@@ -26,7 +26,8 @@ func (p SupportedProvider) IsValid() bool {
 }
 
 type MiningTotals struct {
-	TotalBtcMined float64 `db:"total_btc_mined" json:"total_btc_mined"` // total mined + tx fees from mining
+	TotalBtcPayout float64
+	TotalBtcMined  float64 `db:"total_btc_mined" json:"total_btc_mined"` // total mined + tx fees from mining
 }
 
 // row from rewards table
