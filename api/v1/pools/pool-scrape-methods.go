@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	poolproviders "github.com/enricomilli/neat-server/api/v1/pools/providers"
+	"github.com/google/uuid"
 )
 
 func (pool *Pool) ScrapeMiningData() error {
@@ -76,6 +77,7 @@ func CheckForNewData(storedRewards []poolproviders.MiningReward, scrapedRewards 
 			if !hasNewRewards {
 				hasNewRewards = true
 			}
+			reward.ID = uuid.NewString()
 			newRewards = append(newRewards, reward)
 		}
 

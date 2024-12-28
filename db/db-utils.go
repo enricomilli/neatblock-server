@@ -7,7 +7,17 @@ import (
 )
 
 func BuildUpsertQuery(tableName string, data interface{}, uniqueKey string) (string, map[string]interface{}) {
+	// Get the value and handle pointer types
 	v := reflect.ValueOf(data)
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+
+	// Ensure we're working with a struct
+	if v.Kind() != reflect.Struct {
+		panic("data must be a struct or pointer to struct")
+	}
+
 	t := v.Type()
 
 	fields := []string{}

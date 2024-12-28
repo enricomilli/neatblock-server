@@ -7,7 +7,7 @@ type Pool struct {
 	ID                      string          `db:"id" json:"id"`
 	ObserverURL             string          `db:"pool_url" json:"pool_url"`
 	Status                  string          `db:"status" json:"status"`
-	OwnerID                 string          `db:"user_id" json:"user_id"`
+	UserID                  string          `db:"user_id" json:"user_id"`
 	Name                    string          `db:"name" json:"name"`
 	BoughtHashrate          sql.NullFloat64 `db:"bought_hashrate" json:"bought_hashrate"`                   // added by user
 	HighestHashrateAchieved float64         `db:"highest_achieve_hashrate" json:"highest_achieve_hashrate"` // scraped from pool data

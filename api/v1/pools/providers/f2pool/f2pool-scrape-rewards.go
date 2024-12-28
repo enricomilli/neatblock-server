@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
 
 	poolproviders "github.com/enricomilli/neat-server/api/v1/pools/providers"
 )
@@ -58,9 +60,46 @@ func (provider *F2Pool) ScrapeDailyRewards(observerURL string, poolID string) ([
 		return rewards, err
 	}
 
-	// hasRevShare := checkForRevShare(f2PayoutResponse.Data[0])
-	// if in the list of payouts if payout.type == "revenue_distribution" then there is a revenue share
+	hasRevShare := checkForRevShare(f2PayoutResponse.Data[0])
+	if hasRevShare {
+		f2PayoutResponse.Data = removePayoutsToProvider(f2PayoutResponse.Data)
+	}
+
 	return reformatF2Rewards(f2PayoutResponse.Data, f2RewardsResponse.Data.IncomeData, poolID)
+}
+
+func removePayoutsToProvider(payouts []F2PoolPayoutData) []F2PoolPayoutData {
+
+	response := []F2PoolPayoutData{}
+	distributionMap := map[float64]string{}
+
+	for _, payout := range payouts {
+		percentStr := strings.Split(payout.Comment, "%")[0]
+		percentFloat, _ := strconv.ParseFloat(percentStr, 64)
+		distributionMap[percentFloat] = percentStr
+	}
+
+	highestDist := getHighestRevShare(distributionMap)
+
+	// assuming the highest revenue share is going to the owner
+	for _, payout := range payouts {
+		if strings.HasPrefix(payout.Comment, highestDist) {
+			response = append(response, payout)
+		}
+	}
+
+	return response
+}
+
+// return the string of the higest float
+func getHighestRevShare(distMap map[float64]string) string {
+	highest := 0.0
+	for key := range distMap {
+		if key > highest {
+			highest = key
+		}
+	}
+	return distMap[highest]
 }
 
 func checkForRevShare(payout F2PoolPayoutData) bool {

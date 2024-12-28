@@ -12,7 +12,7 @@ func TestPool_NewProviderInterface(t *testing.T) {
 	testPool := pools.Pool{
 		ObserverURL: "https://www.viabtc.com/observer/dashboard?access_key=c0a80baded29bb989c06458a8d410a13&coin=BTC",
 		Name:        "Test pool",
-		OwnerID:     "d0d4ad7e-6c89-4a44-8e58-2b0d01170c2f",
+		UserID:      "d0d4ad7e-6c89-4a44-8e58-2b0d01170c2f",
 	}
 
 	provider, err := testPool.NewProviderInterface()
@@ -89,12 +89,12 @@ func Test_ScrapeRewards(t *testing.T) {
 		{
 			ObserverURL: "https://www.viabtc.com/observer/dashboard?access_key=c0a80baded29bb989c06458a8d410a13&coin=BTC",
 			Name:        "viabtc pool",
-			OwnerID:     "d0d4ad7e-6c89-4a44-8e58-2b0d01170c2f",
+			UserID:      "d0d4ad7e-6c89-4a44-8e58-2b0d01170c2f",
 		},
 		{
 			ObserverURL: "https://www.f2pool.com/mining-user/6f2e4214d79688ab7697aca78f243d50?user_name=adamantiumnewvz",
 			Name:        "f2pool",
-			OwnerID:     "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
+			UserID:      "a1b2c3d4-e5f6-4a5b-8c9d-0e1f2a3b4c5d",
 		},
 	}
 

@@ -30,7 +30,7 @@ func (pool *Pool) GetProvider() (poolproviders.SupportedProvider, error) {
 	provider := poolproviders.SupportedProvider(strings.ToUpper(splitDomain[0]))
 
 	if !provider.IsValid() {
-		return "", fmt.Errorf("provider %s is not supported", provider)
+		return "", fmt.Errorf("Pools from %s are not supported.", domain)
 	}
 
 	return provider, nil
@@ -41,7 +41,7 @@ func (pool *Pool) NewProviderInterface() (poolproviders.PoolProvider, error) {
 
 	provider, err := pool.GetProvider()
 	if err != nil {
-		return nil, fmt.Errorf("Error extracting provider: %w", err)
+		return nil, err
 	}
 
 	switch provider {

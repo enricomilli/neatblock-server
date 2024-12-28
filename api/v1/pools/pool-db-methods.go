@@ -37,7 +37,7 @@ func (pool *Pool) GetAllRewards() ([]poolproviders.MiningReward, error) {
 	}
 
 	query := `
-		select * from rewards where pool_id = $1
+		select * from pool_rewards where pool_id = $1
 	`
 
 	err = database.Select(&rewards, query, pool.ID)
@@ -68,14 +68,35 @@ func (pool *Pool) StoreRewards(newRewards []poolproviders.MiningReward) error {
 	}
 
 	query := `
-        INSERT INTO rewards (id, pool_id, amount, timestamp, height, hash)
-        VALUES (:id, :pool_id, :amount, :timestamp, :height, :hash)
-        ON CONFLICT (id) DO UPDATE SET
-            pool_id = EXCLUDED.pool_id,
-            amount = EXCLUDED.amount,
-            timestamp = EXCLUDED.timestamp,
-            height = EXCLUDED.height,
-            hash = EXCLUDED.hash
+		INSERT INTO pool_rewards (
+		    id,
+		    pool_id,
+		    date,
+		    hashrate,
+		    btc_reward,
+		    btc_tx_fee,
+		    total,
+		    payout
+		)
+		VALUES (
+		    :id,
+		    :pool_id,
+		    :date,
+		    :hashrate,
+		    :btc_reward,
+		    :btc_tx_fee,
+		    :total,
+		    :payout
+		)
+		ON CONFLICT (id) DO UPDATE SET
+		    pool_id = EXCLUDED.pool_id,
+		    date = EXCLUDED.date,
+		    hashrate = EXCLUDED.hashrate,
+		    btc_reward = EXCLUDED.btc_reward,
+		    btc_tx_fee = EXCLUDED.btc_tx_fee,
+		    total = EXCLUDED.total,
+		    payout = EXCLUDED.payout,
+		    updated_at = EXCLUDED.updated_at
     `
 
 	for _, reward := range newRewards {

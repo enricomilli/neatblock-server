@@ -2,22 +2,37 @@ package pools
 
 import (
 	"net/http"
+	"time"
 
 	apiutil "github.com/enricomilli/neat-server/api/api-utils"
+	"github.com/google/uuid"
 )
 
+type AddPoolRequest struct {
+	URL  string `json:"pool_url"`
+	Name string `json:"pool_name"`
+}
+
+// TODO: add revenue share option
 func HandleAddPool(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
+	addPoolReq := &AddPoolRequest{}
+	err := apiutil.StrictParseJSON(r, addPoolReq)
+	if err != nil {
+		apiutil.ResponseWithError(w, http.StatusBadRequest, "Invalid request")
+		return
+	}
+
 	// VALIDATING REQUEST
-	pool_url := r.URL.Query().Get("pool_url")
+	pool_url := addPoolReq.URL
 	if pool_url == "" {
 		apiutil.ResponseWithError(w, http.StatusBadRequest, "No pool url found")
 		return
 	}
 
-	poolName := r.URL.Query().Get("name")
+	poolName := addPoolReq.Name
 	if poolName == "" {
 		apiutil.ResponseWithError(w, http.StatusBadRequest, "No pool name found")
 		return
@@ -41,10 +56,15 @@ func HandleAddPool(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// VALIDATING WITH POOL PROVIDER
+	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	newPool := Pool{
+		ID:          uuid.NewString(),
+		Status:      "pending",
 		ObserverURL: pool_url,
-		OwnerID:     userID,
+		UserID:      userID,
 		Name:        poolName,
+		CreatedAt:   timestamp,
+		UpdatedAt:   timestamp,
 	}
 
 	provider, err := newPool.NewProviderInterface()
@@ -59,25 +79,20 @@ func HandleAddPool(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = newPool.StorePoolStructState()
+	if err != nil {
+		apiutil.ResponseWithError(w, http.StatusInternalServerError, err)
+		return
+	}
+
 	err = newPool.ScrapeMiningData()
 	if err != nil {
 		apiutil.ResponseWithError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	// STORING THE NEW POOL TO PERSISTANT STORAGE
-	// sbClient, err := supabase.NewClient(os.Getenv("SUPABASE_URL"), userToken, &supabase.ClientOptions{})
-	// if err != nil {
-	// 	apiutil.ResponseWithError(w, http.StatusInternalServerError, err)
-	// 	return
-	// }
-
-	// _, err = sbClient.From("pools").Upsert(newPool, "pool_url", "*", "exact").ExecuteTo(&newPool)
-	// if err != nil {
-	// 	code, msg := db.HandleSupabaseError(err)
-	// 	apiutil.ResponseWithError(w, code, msg)
-	// 	return
-	// }
+	// make pool status as active after scraping rewards
+	newPool.Status = "active"
 
 	err = newPool.StorePoolStructState()
 	if err != nil {
