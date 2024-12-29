@@ -8,7 +8,7 @@ import (
 	"github.com/enricomilli/neat-server/db"
 )
 
-// Scrapes the mining data for all pools in the database
+// Internal endpoint that scrapes the mining data for all pools in the database
 // TODO: make it a longer running process where the pool requests are made at random intervals
 func HandleUpdateAll(w http.ResponseWriter, r *http.Request) {
 
