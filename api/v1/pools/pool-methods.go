@@ -3,6 +3,7 @@ package pools
 import (
 	"fmt"
 
+	poolproviders "github.com/enricomilli/neat-server/api/v1/pools/providers"
 	"github.com/enricomilli/neat-server/db"
 )
 
@@ -23,4 +24,9 @@ func (pool *Pool) StorePoolStructState() error {
 	}
 
 	return nil
+}
+
+func (pool *Pool) UpdateTotals(newTotals poolproviders.MiningTotals) {
+	pool.TotalBtcMined = newTotals.TotalBtcMined
+	pool.TotalBtcPayout = newTotals.TotalBtcPayout
 }

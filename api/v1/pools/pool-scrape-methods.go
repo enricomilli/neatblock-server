@@ -24,6 +24,8 @@ func (pool *Pool) ScrapeMiningData() error {
 		return nil
 	}
 
+	pool.UpdateTotals(scrapedTotals)
+
 	scrapedRewards, err := poolProvider.ScrapeDailyRewards(pool.ObserverURL, pool.ID)
 	if err != nil {
 		return fmt.Errorf("could not scrape daily rewards: %w", err)
