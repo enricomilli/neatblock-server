@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// A general check to see if the string is an URL
 func IsValidURL(str string) bool {
 	// Trim spaces
 	str = strings.TrimSpace(str)
