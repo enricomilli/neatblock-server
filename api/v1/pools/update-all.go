@@ -2,7 +2,9 @@ package pools
 
 import (
 	"fmt"
+	"math/rand"
 	"net/http"
+	"time"
 
 	apiutil "github.com/enricomilli/neat-server/api/api-utils"
 	"github.com/enricomilli/neat-server/db"
@@ -31,11 +33,18 @@ func HandleUpdateAll(w http.ResponseWriter, r *http.Request) {
 
 	// I think this will create a race condition is i make it multi threaded
 	for _, pool := range allPools {
+		randomSleep()
 		err := pool.ScrapeMiningData()
 		if err != nil {
 			fmt.Printf("Could not scrape pool: %s\nError: %v", pool.Name, err)
 		}
+
 	}
 
 	return
+}
+
+func randomSleep() {
+	randomDuration := rand.Float64() * 10.0
+	time.Sleep(time.Duration(randomDuration))
 }

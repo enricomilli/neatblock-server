@@ -21,6 +21,7 @@ func CreateRoutes(router *chi.Mux) {
 				privRoute.Use(middleware.Make(middleware.ValidJWToken))
 
 				privRoute.Post("/pools/add", pools.HandleAddPool)
+				privRoute.Delete("/pools", pools.HandlePoolDelete)
 				// privRoute.Post("/wallets/transactions/all", wallets.HandleAllTransactions)
 			})
 
